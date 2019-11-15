@@ -1,0 +1,87 @@
+
+对于我们的web开发，需要处理的中文乱码：
+
+1.get请求中文参数
+    通过我们当前tomcat的测试，不会出现中文乱码
+    因为我们的tomcat版本比较高（9版本）
+    但是如果我们使用的是比较低版本的tomcat，get请求中文参数有可能会出现乱码
+    解决方式：
+        tomcat/conf/server.xml
+        6x 端口号属性属性值后面新增 URIEncoding="UTF-8"
+
+
+2.post请求中文参数
+    不论是任何版本的tomcat，一定会出现接收中文参数乱码的问题
+    解决方式：
+    request.setCharacterEncoding("UTF-8");
+
+
+3.响应流响应中文
+    一定会出现乱码问题
+    response.setContentType("text/html;charset=utf-8");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,161 @@
+
+实际项目开发中，我们是使用服务器缓存来保存数据字典
+
+既然使用服务器缓存，访问数据这么快，那么我们以前做的所有者的下拉框为什么没有使用服务器缓存呢？而是每一次都要去数据库表中查数据呢？
+
+因为所有者下拉框中的数据，来自于tbl_user用户表，用户表中的数据，总是在事实更新，所以如果使用服务缓存，读取不到最新的数据的
+
+总结：服务器缓存，只适用处理数据字典相关的数据，因为数据字典相关的数据很难改变
+
+我们在什么时间，将数据字典表中的数据，保存到服务器的内存中，形成缓存呢？
+最佳时机：服务器启动时完成的
+
+我们将数据如何保存到服务器内存中呢？
+将数据保存到服务器中，使用域对象来存
+request
+session
+application
+
+我们想要的这样的结果，服务器启动，到数据库表中查询数据字典，将数据字典数据保存到域对象中，
+数据字典应该始终保存在服务器中，只有当服务器关闭了，数据字典才会从内存中移除掉
+
+
+application：所谓的在服务器内存中保存数据（处理服务器缓存），其实就是使用
+             application.setAttribute(key,value);
+生命周期：
+创建：当服务器启动，服务器会自动的为我们创建一个application对象，这个application对象是以单例的形式始终保存在服务器中
+销毁：当服务器关闭，application对象销毁
+
+
+处理数据字典流程：
+    当服务器启动，服务器会自动的为我们创建一个application对象，连接数据库取得数据字典，保存到application对象中，
+    这个application对象是以单例的形式始终保存在服务器中，里面保存的数据字典也会始终存在
+    当服务器关闭，application对象销毁，里面的数据字典也会随之移除掉
+
+
+以上流程我们应该是在监听器中进行处理
+    监听器主要是用来监听域对象的创建与销毁，或者是域对象中属性值的添加，更新与移除。
+    我们今天需要监听的是application域对象，监听application对象的创建。
+
+
+结合监听器，再来完善以上的处理数据字典的流程：
+
+    当服务器启动，服务器会自动的为我们创建一个application对象，当application对象创建完毕后，
+    用来监听application对象创建的监听器中的方法，立刻执行(表示监听到该对象创建了)
+    可以在该用来监听application对象创建的监听方法中处理如下代码：
+
+    连接数据库取得数据字典，保存到application对象中。
+
+    这个application对象是以单例的形式始终保存在服务器中，里面保存的数据字典也会始终存在
+    当服务器关闭，application对象销毁，里面的数据字典也会随之移除掉
+
+
+使用业务层，取得数据
+
+SELECT * FROM tbl_dic_value
+这么取是绝对不行的！！！
+List<DicValue> dvList = 执行sql语句  47条
+47条是所有的记录，我们在某一类的下拉框中，不可能将这47条记录一起铺出来
+
+我们应该是分门别类的来保存数据
+
+根据字典类型typeCode（外键），来查询对应的字典值列表
+
+SELECT * FROM tbl_dic_value WHERE typeCode='appellation' ORDER BY orderNo
+List<DicValue> dvList1 = 执行sql语句;  5条
+
+SELECT * FROM tbl_dic_value WHERE typeCode='stage' ORDER BY orderNo
+List<DicValue> dvList2 = 执行sql语句;  9条
+
+SELECT * FROM tbl_dic_value WHERE typeCode='clueState' ORDER BY orderNo
+List<DicValue> dvList3 = 执行sql语句;  7条
+
+...
+...
+dvList7
+
+以上7个dvList加在一起才是47条
+
+业务层需要这么来处理
+取得上述7个dvList，对应7个key（约定：code+List）
+我们在业务层处理成为map对象中的信息，为监听器返回map
+在监听器中我们得到map，拆解map中的key和value，变成application存值的key和value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

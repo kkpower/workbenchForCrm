@@ -1,0 +1,65 @@
+
+
+$("#activityPage").bs_pagination('getOption', 'currentPage')
+    维持当前页的页码
+
+$("#activityPage").bs_pagination('getOption', 'rowsPerPage')
+    维持每页需要展现的记录数
+
+pageList(1,2)
+展现第一页，每页展现两条记录
+
+pageList($("#activityPage").bs_pagination('getOption', 'currentPage'),$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+展现操作过后的当前页，每页展现以前已经设置好的记录数
+
+
+添加操作后：
+参数1:1 回到第一页
+参数2：$("#activityPage").bs_pagination('getOption', 'rowsPerPage') 维持每页展现的记录数
+pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'))
+
+
+修改操作后：
+参数1：回到操作前的当前页 $("#activityPage").bs_pagination('getOption', 'currentPage')
+参数2：维持每页展现的记录数 $("#activityPage").bs_pagination('getOption', 'rowsPerPage')
+pageList($("#activityPage").bs_pagination('getOption', 'currentPage'),$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
+删除操作后：
+参数1：1 回到第一页
+参数2：$("#activityPage").bs_pagination('getOption', 'rowsPerPage') 维持每页展现的记录数
+pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
